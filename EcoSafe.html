@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSafe: EHS Incident Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Raleway:wght@600&display=swap" rel="stylesheet">
+    <style>
+        /* Resetting margin and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap; /* Added for better responsiveness */
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-right: 20px; /* Space between logo and title */
+        }
+
+        h1 {
+            color: #2C3E50;
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        p.tagline {
+            color: #7F8C8D;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        nav {
+            background-color: #2C3E50;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            padding: 10px;
+            flex-wrap: wrap; /* Added for better responsiveness */
+        }
+
+        nav ul li {
+            flex: 1;
+            min-width: 120px; /* Ensures items do not shrink too much */
+        }
+
+        nav ul li a {
+            display: block;
+            text-align: center;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #34495E;
+        }
+
+        .marquee {
+            background-color: #1ABC9C;
+            color: white;
+            font-size: 1.1em;
+            padding: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 15s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        section {
+            margin-bottom: 40px;
+        }
+
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #BDC3C7;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+            font-size: 1em;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #3498DB;
+            outline: none;
+        }
+
+        button {
+            background-color: #3498DB;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: #2980B9;
+        }
+
+        #notification {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #2ECC71;
+            color: white;
+            border-radius: 4px;
+            display: none; /* Hidden by default */
+        }
+
+        #incident-dashboard {
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #BDC3C7;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498DB;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .status {
+            font-weight: bold;
+            color: #27AE60; /* Green for active */
+        }
+
+        .hover-button {
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        .hover-button:hover {
+            background-color: #e67e22;
+        }
+
+        .detail-card {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #BDC3C7;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            width: 300px;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 100%; /* Position below the button */
+        }
+
+        .hover-button:hover .detail-card {
+            display: block;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column; /* Stack logo and title */
+                align-items: flex-start; /* Align left */
+            }
+
+            .logo {
+                margin-bottom: 10px; /* Space between logo and title */
+                width: 120px; /* Adjust logo size for mobile */
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            p.tagline {
+                font-size: 1em;
+            }
+
+            nav ul {
+                flex-direction: column; /* Stack navigation items */
+            }
+
+            nav ul li {
+                min-width: auto; /* Allow items to take full width */
+            }
+
+            form {
+                padding: 20px; /* Reduce padding for mobile */
+            }
+
+            input, textarea, select {
+                font-size: 0.9em; /* Adjust font size */
+            }
+
+            button {
+                font-size: 0.9em; /* Adjust button font size */
+            }
+
+            .detail-card {
+                width: 90%; /* Make detail card responsive */
+                max-width: 300px; /* Limit max width */
+            }
+
+            table th, table td {
+                font-size: 0.9em; /* Adjust table font size */
+                padding: 8px; /* Reduce padding in table cells */
+            }
+
+            .hover-button {
+                padding: 6px 10px; /* Reduce padding for hover button */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://ik.imagekit.io/SIBHI/Cr/EcoSafe.png" alt="EcoSafe Logo" class="logo">
+        <div>
+            <h1>EcoSafe</h1>
+            <p class="tagline">Environmental Health & Safety Management</p>
+        </div>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#incident-report">Report Incident</a></li>
+            <li><a href="#incident-dashboard">Dashboard</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="marquee">
+        <div class="marquee-content">🔔 New Feature: Upload incident images! | 🆕 Now track compliance in real-time! | 🚨 Report incidents instantly! | 🌿 EcoSafe: Your partner in environmental safety!</div>
+    </div>
+
+    <main>
+        <section id="incident-report">
+            <h2>Report an Incident</h2>
+            <form id="reportForm">
+                <label for="incidentType">Incident Type:</label>
+                <select id="incidentType" required>
+                    <option value="" disabled selected>Select Type</option>
+                    <option value="spill">Chemical Spill</option>
+                    <option value="accident">Workplace Accident</option>
+                    <option value="exposure">Exposure Incident</option>
+                </select>
+
+                <label for="description">Description:</label>
+                <textarea id="description" rows="4" required></textarea>
+
+                <label for="date">Date:</label>
+                <input type="date" id="date" required>
+
+                <label for="time">Time:</label>
+                <input type="time" id="time" required>
+
+                <label for="location">Location:</label>
+                <input type="text" id="location" required>
+
+                <button type="submit">Submit Report</button>
+            </form>
+            <div id="notification"></div>
+        </section>
+
+        <section id="incident-dashboard">
+            <h2>Incident Dashboard</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="incidentTableBody">
+                    <!-- Fake incident entries -->
+                    <tr>
+                        <td>1</td>
+                        <td>Chemical Spill</td>
+                        <td>Spilled 10 liters of chemical on the factory floor.</td>
+                        <td>2024-09-10 08:30</td>
+                        <td class="status">Active</td>
+                        <td><button class="hover-button">Details</button>
+                            <div class="detail-card">Location: Factory Floor</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Workplace Accident</td>
+                        <td>Employee slipped and fell near the loading dock.</td>
+                        <td>2024-09-11 14:45</td>
+                        <td class="status">Active</td>
+                        <td><button class="hover-button">Details</button>
+                            <div class="detail-card">Location: Loading Dock</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Exposure Incident</td>
+                        <td>Worker exposed to fumes during maintenance.</td>
+                        <td>2024-09-12 09:15</td>
+                        <td class="status">Active</td>
+                        <td><button class="hover-button">Details</button>
+                            <div class="detail-card">Location: Maintenance Room</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Chemical Spill</td>
+                        <td>Leak detected in the storage tank.</td>
+                        <td>2024-09-13 11:00</td>
+                        <td class="status">Active</td>
+                        <td><button class="hover-button">Details</button>
+                            <div class="detail-card">Location: Storage Area</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Workplace Accident</td>
+                        <td>Forklift accident in the warehouse.</td>
+                        <td>2024-09-14 16:20</td>
+                        <td class="status">Active</td>
+                        <td><button class="hover-button">Details</button>
+                            <div class="detail-card">Location: Warehouse</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById('reportForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const incidentType = document.getElementById('incidentType').value;
+            const description = document.getElementById('description').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const location = document.getElementById('location').value;
+            const notification = document.getElementById('notification');
+
+            // Mocking report submission
+            notification.textContent = "Incident reported successfully!";
+            notification.style.display = "block";
+
+            // Clearing the form
+            this.reset();
+
+            // Add incident to the dashboard (mocked)
+            addIncidentToDashboard(incidentType, description, date, time, location);
+        });
+
+        function addIncidentToDashboard(type, description, date, time, location) {
+            const tableBody = document.getElementById('incidentTableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${tableBody.children.length + 6}</td>
+                <td>${type}</td>
+                <td>${description}</td>
+                <td>${date} ${time}</td>
+                <td class="status">Active</td>
+                <td><button class="hover-button">Details</button>
+                    <div class="detail-card">Location: ${location}</div>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        }
+    </script>
+</body>
+</html>
